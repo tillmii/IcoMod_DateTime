@@ -18,6 +18,7 @@
                     "type": "number",
                     "min": 0,
                     "max": 3600,
+                    "step": 3600,
                     "default": 0
                 }
             ]
