@@ -11,7 +11,7 @@
                     "min": 0,
                     "max": 82800,
                     "step": 3600,
-                    "default": 60000
+                    "default": 3600
                 },
                 {
                     "name": "daylightOffsetSec",
