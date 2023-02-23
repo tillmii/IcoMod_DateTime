@@ -8,6 +8,7 @@
 #include <Adafruit_ST7735.h>
 #include "IcoMod_DateTime.h"
 #include "time.h"
+#include "TextUtils.h"
 
 IcoMod_DateTime::IcoMod_DateTime(Adafruit_ST7735 *tft, const unsigned long gmtOffsetSec, const unsigned long daylightOffsetSec)
 {
@@ -23,17 +24,6 @@ IcoMod_DateTime::IcoMod_DateTime(Adafruit_ST7735 *tft, const unsigned long gmtOf
   configTime(_gmtOffsetSec, _daylightOffsetSec, _ntpServer);
 }
 
-void placeTextInCenter(Adafruit_ST7735 *tft, const String &textBuf, uint16_t x, uint16_t y, uint8_t textSize, uint16_t textColor)
-{
-  int16_t x1, y1;
-  uint16_t size[2] = {0, 0};
-  tft->setTextSize(textSize);
-  tft->setTextColor(textColor);
-  tft->getTextBounds(textBuf, 0, 0, &x1, &y1, &size[0], &size[1]); // calc width of new string
-  tft->setCursor(x - size[0] / 2, y - size[1] / 2);
-  tft->print(textBuf);
-}
-
 void printTime(Adafruit_ST7735 *tft, struct tm timeinfo)
 {
   char hour[3];
@@ -42,8 +32,8 @@ void printTime(Adafruit_ST7735 *tft, struct tm timeinfo)
   char minute[3];
   strftime(minute, 3, "%M", &timeinfo);
 
-  placeTextInCenter(tft, hour, tft->width() / 2, tft->height() / 3, 6, ST77XX_WHITE);
-  placeTextInCenter(tft, minute, tft->width() / 2, tft->height() / 3 * 2, 6, ST77XX_WHITE);
+  TextUtils::printCentered(tft, hour, 30, 6, ST77XX_WHITE);
+  TextUtils::printCentered(tft, minute, 84, 6, ST77XX_WHITE);
 }
 
 void printDate(Adafruit_ST7735 *tft, struct tm timeinfo)
@@ -57,9 +47,9 @@ void printDate(Adafruit_ST7735 *tft, struct tm timeinfo)
   char dayOfTheWeek[20];
   strftime(dayOfTheWeek, 20, "%A", &timeinfo);
 
-  placeTextInCenter(tft, month, tft->width() / 2, tft->height() / 5, 2, ST77XX_WHITE);
-  placeTextInCenter(tft, day, tft->width() / 2, tft->height() / 2, 6, ST77XX_WHITE);
-  placeTextInCenter(tft, dayOfTheWeek, tft->width() / 2, tft->height() / 5 * 4, 2, ST77XX_WHITE);
+  TextUtils::printCentered(tft, month, 24, 2, ST77XX_WHITE); // 24 -> height(160) / 5 - textSize(16) / 2
+  TextUtils::printCentered(tft, day, 56, 6, ST77XX_WHITE); // 56 -> height(160) / 2 - textSize(48) / 2
+  TextUtils::printCentered(tft, dayOfTheWeek, 120, 2, ST77XX_WHITE); // 56 -> height(160) / 5 * 4 - textSize(16) / 2
 }
 
 void printLocalTime(Adafruit_ST7735 *tft)
