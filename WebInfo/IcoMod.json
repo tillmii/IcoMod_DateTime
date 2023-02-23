@@ -1,0 +1,23 @@
+ {
+            "name": "DateTime",
+            "version": "1.0.0",
+            "description": "Displays the current time and date.",
+            "author": "Till Michels",
+            "license": "MIT",
+            "config": [
+                {
+                    "name": "gmtOffsetSec",
+                    "type": "number",
+                    "min": 0,
+                    "max": 82800,
+                    "default": 60000
+                },
+                {
+                    "name": "daylightOffsetSec",
+                    "type": "number",
+                    "min": 0,
+                    "max": 3600,
+                    "default": 0
+                }
+            ]
+        }
