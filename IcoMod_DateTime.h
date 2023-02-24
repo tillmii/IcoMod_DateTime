@@ -8,13 +8,14 @@
 
 #include "Arduino.h"
 #include "IcoMod.h"
+#include <ArduinoJson.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_ST7735.h>
 
 class IcoMod_DateTime : public IcoMod
 {
   public:
-    IcoMod_DateTime(Adafruit_ST7735* tft, const unsigned long gmtOffsetSec, const unsigned long daylightOffsetSec);
+    IcoMod_DateTime(Adafruit_ST7735* tft, unsigned int colors[], JsonObject &config);
     void onClick();
     void initialize();
     void refresh();

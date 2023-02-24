@@ -4,18 +4,20 @@
 */
 
 #include "Arduino.h"
-#include <Adafruit_GFX.h>
-#include <Adafruit_ST7735.h>
 #include "IcoMod_DateTime.h"
 #include "time.h"
+#include <ArduinoJson.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_ST7735.h>
 #include "TextUtils.h"
 
-IcoMod_DateTime::IcoMod_DateTime(Adafruit_ST7735 *tft, const unsigned long gmtOffsetSec, const unsigned long daylightOffsetSec)
+IcoMod_DateTime::IcoMod_DateTime(Adafruit_ST7735* tft, unsigned int colors[], JsonObject &config)
 {
   _tft = tft;
+  _colors = colors;
 
-  _gmtOffsetSec = gmtOffsetSec;
-  _daylightOffsetSec = daylightOffsetSec;
+  _gmtOffsetSec = config["gmtOffsetSec"];
+  _daylightOffsetSec = config["daylightOffsetSec"];
 
   _ntpServer = "pool.ntp.org";
 
@@ -24,7 +26,7 @@ IcoMod_DateTime::IcoMod_DateTime(Adafruit_ST7735 *tft, const unsigned long gmtOf
   configTime(_gmtOffsetSec, _daylightOffsetSec, _ntpServer);
 }
 
-void printTime(Adafruit_ST7735 *tft, struct tm timeinfo)
+void printTime(Adafruit_ST7735 *tft, unsigned int colors[], struct tm timeinfo)
 {
   char hour[3];
   strftime(hour, 3, "%H", &timeinfo);
@@ -32,11 +34,11 @@ void printTime(Adafruit_ST7735 *tft, struct tm timeinfo)
   char minute[3];
   strftime(minute, 3, "%M", &timeinfo);
 
-  TextUtils::printCentered(tft, hour, 30, 6, ST77XX_WHITE);
-  TextUtils::printCentered(tft, minute, 84, 6, ST77XX_WHITE);
+  TextUtils::printCentered(tft, hour, 30, 6, colors[1]);
+  TextUtils::printCentered(tft, minute, 84, 6, colors[1]);
 }
 
-void printDate(Adafruit_ST7735 *tft, struct tm timeinfo)
+void printDate(Adafruit_ST7735 *tft, unsigned int colors[], struct tm timeinfo)
 {
   char month[20];
   strftime(month, 20, "%B", &timeinfo);
@@ -47,9 +49,9 @@ void printDate(Adafruit_ST7735 *tft, struct tm timeinfo)
   char dayOfTheWeek[20];
   strftime(dayOfTheWeek, 20, "%A", &timeinfo);
 
-  TextUtils::printCentered(tft, month, 24, 2, ST77XX_WHITE); // 24 -> height(160) / 5 - textSize(16) / 2
-  TextUtils::printCentered(tft, day, 56, 6, ST77XX_WHITE); // 56 -> height(160) / 2 - textSize(48) / 2
-  TextUtils::printCentered(tft, dayOfTheWeek, 120, 2, ST77XX_WHITE); // 56 -> height(160) / 5 * 4 - textSize(16) / 2
+  TextUtils::printCentered(tft, month, 24, 2, colors[1]); // 24 -> height(160) / 5 - textSize(16) / 2
+  TextUtils::printCentered(tft, day, 56, 6, colors[1]); // 56 -> height(160) / 2 - textSize(48) / 2
+  TextUtils::printCentered(tft, dayOfTheWeek, 120, 2, colors[1]); // 56 -> height(160) / 5 * 4 - textSize(16) / 2
 }
 
 void printLocalTime(Adafruit_ST7735 *tft)
@@ -71,7 +73,7 @@ void IcoMod_DateTime::onClick()
 
 void IcoMod_DateTime::initialize()
 {
-  _tft->fillScreen(ST77XX_BLACK);
+  _tft->fillScreen(_colors[0]);
 
   struct tm timeinfo;
   if (!getLocalTime(&timeinfo))
@@ -80,7 +82,7 @@ void IcoMod_DateTime::initialize()
     return;
   }
   
-  _displayTime ? printTime(_tft, timeinfo) : printDate(_tft, timeinfo);
+  _displayTime ? printTime(_tft, _colors, timeinfo) : printDate(_tft, _colors, timeinfo);
 }
 
 void IcoMod_DateTime::refresh()
